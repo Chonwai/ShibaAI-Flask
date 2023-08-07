@@ -1,1 +1,6 @@
 Flask==2.2.2
+langchain
+openai
+python-dotenv
+google-search-results
+flask_cors==3.0.10
