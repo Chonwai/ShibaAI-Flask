@@ -16,3 +16,8 @@ venv.bak/
 
 .DS_Store
 **/.DS_Store
+
+test_lang.ipynb
+data.json
+Travel3EventData.json
+Travel3EventData.csv

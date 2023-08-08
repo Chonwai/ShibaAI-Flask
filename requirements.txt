@@ -4,3 +4,6 @@ openai
 python-dotenv
 google-search-results
 flask_cors==3.0.10
+pgvector
+tiktoken
+psycopg2-binary==2.9.3

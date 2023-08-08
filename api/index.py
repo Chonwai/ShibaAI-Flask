@@ -1,7 +1,8 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from dotenv import load_dotenv
 from api.services.agent.agent import AgentService
 from api.services.chain.chain import ChainService
+from api.services.qabot.qabot import QABotService
 from flask_cors import CORS
 load_dotenv()
 
@@ -41,3 +42,17 @@ def analyze():
 def about():
     AgentService.about()
     return 'About'
+
+
+@app.route('/events/qa')
+def eventsQA():
+    try:
+        # requestData = request.get_json()
+        # query = requestData['query']
+        # metadata = requestData['metadata'] or {}
+        query = request.args.get('query')
+        metadata = request.args.get('metadata')
+        res = QABotService.qaEvent(query, metadata)
+        return jsonify({'status': True, 'content': res})
+    except Exception as e:
+        return jsonify({'status': False, 'message': str(e)})
