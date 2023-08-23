@@ -29,6 +29,8 @@ class QABotService:
 
         print(docs)
 
+        query = query + "（包括活動地點以及活動開始和結束日期）"
+
         chain = load_qa_chain(ChatOpenAI(model_name=os.getenv(
             "OPENAI_MODEL_NAME"), temperature=0.7), chain_type="stuff")
         res = chain({"input_documents": docs, "question": query},
