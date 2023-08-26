@@ -5,7 +5,6 @@ from dotenv import load_dotenv
 from langchain.chains.question_answering import load_qa_chain
 from langchain.chat_models import ChatOpenAI
 import os
-import datetime
 load_dotenv()
 
 
@@ -26,18 +25,16 @@ class QABotService:
             embedding_function=QABotService.embeddings,
         )
 
-        # docs = store.similarity_search(query, filter=filter, k=10)
+        docs = store.similarity_search(query, filter=filter, k=10)
 
-        docs = store.as_retriever(
-            search_kwargs={'filter': filter, 'k': 10,
-                           'fetch_k': 20}
-        )
+        # docs = store.as_retriever(
+        #     search_kwargs={'filter': filter, 'k': 10,
+        #                    'fetch_k': 20}
+        # )
 
         print(docs)
 
-        query = query + "（根據用戶提供的描述，給用戶推薦兩個有效的活動，提問日期：{query_date}；推薦的兩個活動內容要包含活動地點以及活動開始和結束日期。）".format(
-            query_date=datetime.now().strftime("%Y-%m-%d")
-        )
+        query = query + "（根據用戶提供的描述，給用戶推薦兩個有效的活動，推薦的兩個活動內容要包含活動地點以及活動開始和結束日期。）"
 
         print(query)
 
