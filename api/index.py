@@ -47,12 +47,8 @@ def about():
 @app.route('/events/qa')
 def eventsQA():
     try:
-        # requestData = request.get_json()
-        # query = requestData['query']
-        # metadata = requestData['metadata'] or {}
         query = request.args.get('query')
-        metadata = request.args.get('metadata')
-        res = QABotService.qaEvent(query, metadata)
+        res = QABotService.qaEvent(query)
         return jsonify({'status': True, 'content': res})
     except Exception as e:
         return jsonify({'status': False, 'message': str(e)})

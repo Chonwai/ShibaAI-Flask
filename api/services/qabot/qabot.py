@@ -15,10 +15,14 @@ class QABotService:
     # pgvector_db = PGVectorDB("PGVECTOR_DB")
 
     @staticmethod
-    def qaEvent(query, metadata):
-        filter = {}
-
+    def qaEvent(query):
         k = 15
+        amount = 3
+        llm = ChatOpenAI(model_name=os.getenv(
+            "OPENAI_MODEL_NAME"), temperature=0.3)
+
+        filter = {}
+        filter['is_active'] = 'true'
 
         COLLECTION_NAME = os.getenv("QABOT_COLLECTION_NAME")
 
@@ -30,20 +34,14 @@ class QABotService:
 
         docs = store.similarity_search(query, filter=filter, k=k)
 
-        # docs = store.as_retriever(
-        #     search_kwargs={'filter': filter, 'k': 10,
-        #                    'fetch_k': 20}
-        # )
-
         print(docs)
 
-        query = query + "（根據用戶提供的描述，給用戶推薦兩個有效的活動，有效的活動必須是還未結束的活動（今天是{current_date}），推薦的兩個活動內容要包含活動地點以及活動開始和結束日期，輸出的內容只可以用英文或繁體中文！）".format(
-            current_date=datetime(2023, 6, 1, 0, 0).strftime("%Y-%m-%d"), k=k)
+        query = query + "（根據用戶提供的描述，在我們的數據中推薦{event_amount}個活動，其內容要包含活動名稱、詳情、地點、開始和結束日期以及活動鏈接，輸出的內容只可以用英文或繁體中文！）".format(
+            current_date=datetime(2023, 6, 1, 0, 0).strftime("%Y-%m-%d"), event_amount=amount)
 
         print(query)
 
-        chain = load_qa_chain(ChatOpenAI(model_name=os.getenv(
-            "OPENAI_MODEL_NAME"), temperature=0.3), chain_type="stuff")
+        chain = load_qa_chain(llm=llm, chain_type="stuff")
         res = chain({"input_documents": docs, "question": query},
                     return_only_outputs=True)
 
