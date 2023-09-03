@@ -15,7 +15,7 @@ class QABotService:
     @staticmethod
     def qaEvent(query):
         k = 10
-        amount = 3
+        amount = 2
         llm = ChatOpenAI(model_name=os.getenv(
             "OPENAI_MODEL_NAME"), temperature=0.3)
 
