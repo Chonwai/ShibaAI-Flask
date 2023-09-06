@@ -1,9 +1,11 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, Response, jsonify, stream_with_context
 from dotenv import load_dotenv
 from api.services.agent.agent import AgentService
 from api.services.chain.chain import ChainService
 from api.services.qabot.qabot import QABotService
+# from services.qabot.qabot import QABotService
 from flask_cors import CORS
+import time
 load_dotenv()
 
 app = Flask(__name__)
@@ -52,3 +54,34 @@ def eventsQA():
         return jsonify({'status': True, 'content': res})
     except Exception as e:
         return jsonify({'status': False, 'message': str(e)})
+
+
+@app.route('/events/qa/steaming')
+def eventsQAStreaming():
+    try:
+        query = request.args.get('query')
+
+    #     def generate():
+    #         for ratio in query:
+    #             yield str(ratio)
+    #             print("ratio:", ratio)
+    #             time.sleep(0.5)
+    #     return Response(stream_with_context(generate()), mimetype='text/event-stream')
+        return Response(QABotService.qaEvent(query), mimetype="text/event-stream")
+        # def event_stream():
+        #     for line in QABotService.qaEvent(query):
+        #         print(line)
+        #         text = line.choices[0].delta.get('content', '')
+        #         if len(text):
+        #             yield text
+        #         # print("Response: {}".format(res))
+        #         # yield f"data: {res}\n\n"
+        #         # yield jsonify({'status': True, 'content': res})
+    # return Response(stream_with_context(event_stream()), mimetype='text/event-stream')
+    except Exception as e:
+        print("Error: {}".format(e))
+        return jsonify({'status': False, 'message': str(e)})
+
+
+# if __name__ == '__main__':
+#     app.run(debug=True)
