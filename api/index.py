@@ -67,7 +67,7 @@ def eventsQAStreaming():
     #             print("ratio:", ratio)
     #             time.sleep(0.5)
     #     return Response(stream_with_context(generate()), mimetype='text/event-stream')
-        return Response(QABotService.qaEvent(query), mimetype="text/event-stream")
+        return Response(QABotService.qaEventStreaming(query), mimetype="text/event-stream")
         # def event_stream():
         #     for line in QABotService.qaEvent(query):
         #         print(line)

@@ -21,6 +21,39 @@ class QABotService:
     def qaEvent(query):
         k = 10
         amount = 2
+        llm = ChatOpenAI(model_name=os.getenv(
+            "OPENAI_MODEL_NAME"), temperature=0.3)
+
+        filter = {}
+        filter['is_active'] = 'true'
+
+        COLLECTION_NAME = os.getenv("QABOT_COLLECTION_NAME")
+
+        store = PGVector(
+            collection_name=COLLECTION_NAME,
+            connection_string=QABotService.CONNECTION_STRING,
+            embedding_function=QABotService.embeddings,
+        )
+
+        docs = store.similarity_search(query, filter=filter, k=k)
+
+        print(docs)
+
+        query = query + "（根據用戶提供的描述，在我們的數據中推薦{event_amount}個活動，其內容要包含活動名稱、詳情、地點、開始和結束日期以及Travel3活動鏈接，輸出的內容只可以用英文或繁體中文！）".format(
+            current_date=datetime(2023, 6, 1, 0, 0).strftime("%Y-%m-%d"), event_amount=amount)
+
+        print(query)
+
+        chain = load_qa_chain(llm=llm, chain_type="stuff")
+        res = chain({"input_documents": docs, "question": query},
+                    return_only_outputs=True)
+
+        return res
+
+    @staticmethod
+    def qaEventStreaming(query):
+        k = 10
+        amount = 2
         handler = ChainStreamHandler()
         llm = ChatOpenAI(model_name=os.getenv(
             "OPENAI_MODEL_NAME"), temperature=0.3, streaming=True, callback_manager=CallbackManager([handler]))
